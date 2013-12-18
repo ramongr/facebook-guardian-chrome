@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+
+  "name": "Facebook Guardian",
+  "description": "This extension protect your facebook buttons from wrongly usage",
+  "version": "1.1",
+  "content_scripts" : [{
+    "matches": ["https://www.facebook.com/*"],
+    "css": ["bootstrap.min.css"],
+    "js" : ["jquery-2.0.3.min.js","bootstrap.min.js","bootbox.min.js","main.js"]
+  }],
+  "web_accessible_resources": ["jquery-2.0.3.js","jquery-2.0.3.min.map"]
+}
