@@ -1,31 +1,43 @@
-// Saves options to localStorage.
-function save_options() {
-  var select = document.getElementById("color");
-  var color = select.children[select.selectedIndex].value;
-  localStorage["favorite_color"] = color;
-
-  // Update status to let user know options were saved.
-  var status = document.getElementById("status");
-  status.innerHTML = "Options Saved.";
-  setTimeout(function() {
-    status.innerHTML = "";
-  }, 750);
+function getData()
+{
+	//Popular a tabela ao entrar na página das opções
 }
 
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-  var favorite = localStorage["favorite_color"];
-  if (!favorite) {
-    return;
-  }
-  var select = document.getElementById("color");
-  for (var i = 0; i < select.children.length; i++) {
-    var child = select.children[i];
-    if (child.value == favorite) {
-      child.selected = "true";
-      break;
-    }
-  }
+function returnData(Email)
+{
+	chrome.storage.sync.get('Email', function (result) {
+
+		var code = result.Email;
+
+		alert("Email: " + Email + ", Código: " + code);
+
+	});
 }
-document.addEventListener('DOMContentLoaded', restore_options);
-document.querySelector('#save').addEventListener('click', save_options);
+
+function clickHandler(e) 
+{
+  bootbox.confirm("<form role='form'><br><br><div class='title'><h3><b>Instruções</b></h3></div><br><div class='text'>O Email escolhido deve ser <b>obrigatoriamente</b> igual ao Email do Facebook; <br><br>O Código só deve conter números entre <b>0</b> e <b>9</b>;</div><br><br><div class='form-group'><label class='text' for='Email'><b>Email</b></label><br><input type='email' class='form-control' id='Email'></div><br><div class='form-group'><label class='text' for='Password1'><b>Código</b></label><br><input type='password' class='form-control' id='Password1'></div><br><div class='form-group'><label class='text' for='Password2'><b>Confirmar Código</b></label><br><input type='password' class='form-control' id='Password2'></div></form>", function(result) {
+
+	if($('#Password1').val() == $('#Password2').val())
+	{
+		var Email = $('#Email').val();
+		var code = $('#Password1').val();
+
+		chrome.storage.sync.set({'Email': code});
+
+		//returnData(Email);
+
+		bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
+	}
+	else
+	{
+		bootbox.alert("<br><div class='text'><b>Os códigos inseridos não são iguais. <br><br>Tente de novo.</b></div>");
+	}
+
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelector('button').addEventListener('click', clickHandler);
+});
+	

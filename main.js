@@ -20,7 +20,7 @@ $(document).ready(function()
 	    	{
 	    		bootbox.alert("<br><div style='text-align:center' class='title'><h3><b>Código errado</b></h3></div>");
 	    	}
-	    });
+		});
 
 
 		$('#num1').on('click',function(){
