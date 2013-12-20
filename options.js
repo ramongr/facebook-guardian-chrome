@@ -1,11 +1,14 @@
 function getData()
 {
-	//Popular a tabela ao entrar na página das opções
+	chrome.storage.local.get(null, function(items) {
+	    var allKeys = Object.keys(items);
+	    console.log(allKeys);
+	});
 }
 
 function returnData(Email)
 {
-	chrome.storage.sync.get('Email', function (result) {
+	chrome.storage.local.get('Email', function (result) {
 
 		var code = result.Email;
 
@@ -23,11 +26,12 @@ function clickHandler(e)
 		var Email = $('#Email').val();
 		var code = $('#Password1').val();
 
-		chrome.storage.sync.set({'Email': code});
-
-		//returnData(Email);
+		chrome.storage.local.set({'Email': code});
 
 		bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
+
+		//returnData(Email);
+		//getData();
 	}
 	else
 	{
