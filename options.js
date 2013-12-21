@@ -4,7 +4,7 @@ function getData()
 	    var allKeys = Object.keys(items);
 	    //console.log(allKeys);
 
-	    var table = "<table align='center' class='text table table-striped'>";
+	    var table = "<table id='tb' align='center' class='text table table-striped'>";
 
 		table += "<tr>																																																		  <td style='width: 50px; text-align: center;'><b> # </b></td>																																					    <td style='width: 200px; text-align: center;'><b> E-Mail </b></td>																																				  <td style='width: 100px; text-align: center;'><b> Código </b></td>																																				<td style='width: 100px; text-align: center;'><b> Edição </b></td>																																				  </tr>"
 
@@ -12,7 +12,7 @@ function getData()
 		{
 			var Email = allKeys[i];
 
-			table += "<tr><td style='width: 100px; text-align: center;'> " 																																					  + (i+1) + 																																														            "</td><td style='width: 100px; text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='width: 100px; text-align: center;'>" 																																		                  + items[allKeys[i]] + 																																														"</td><td style='width: 100px; text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' class='btn btn-default btn-lg'><span class='glyphicon glyphicon-pencil'></span></button>															<button id='remove' type='button' class='btn btn-default btn-lg'><span class='glyphicon glyphicon-remove'></span></button></td></tr>";
+			table += "<tr><td style='width: 100px; text-align: center;'>" 																																					  + (i+1) + 																																														            "</td><td style='width: 100px; text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='width: 100px; text-align: center;'>" 																																		                  + items[allKeys[i]] + 																																														"</td><td style='width: 100px; text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' class='btn btn-default btn-lg'><span class='glyphicon glyphicon-pencil'></span></button>															<button id='remove' type='button' class='btn btn-default btn-lg'><span class='glyphicon glyphicon-remove'></span></button></td></tr>";
 			
 		}
 
@@ -20,9 +20,16 @@ function getData()
 
 		document.getElementById('table-print').innerHTML = table;
 
-		var bt_remove = document.getElementById ("remove");
+		$('button#remove').on('click',function(){
 
-		bt_remove.addEventListener("click", function () {removeUser()}, false);
+			removeUser();
+		});
+
+		$('button#edit').on('click',function(){
+			
+			editUser();
+		});
+
 	});
 	
 }
@@ -84,8 +91,74 @@ function clickHandler(e)
 
 function removeUser()
 {
-	console.log("cheguei");
+	var rows = document.getElementById('tb')
+                 .getElementsByTagName('tbody')[0]
+                  .getElementsByTagName('tr');
+
+    for (i = 0; i < rows.length; i++) 
+    {
+        rows[i].onclick = function () {
+        
+            var mail = document.getElementById('tb')
+             .getElementsByTagName('tbody')[0]
+              .getElementsByTagName('tr')[this.rowIndex]
+              .getElementsByTagName('td')[1]
+              .innerHTML;
+
+            chrome.storage.local.remove(mail, function() {
+
+				bootbox.alert("<br><div class='text'><b>Utilizador removido com sucesso</b></div>");
+
+				getData();
+
+			});
+        }
+    }
 }
+
+function editUser()
+{
+	bootbox.confirm("<form role='form'>																																														          <br><br>																																																	          <div class='text'>O Código só deve conter números entre <b>0</b> e <b>9</b>.</div>																														          <br><br>																																																	          <div class='form-group'>																																													          <label class='text' for='Password1'><b>Código</b></label>																																					          <br>																																																		          <input type='password' class='form-control' id='Password1'>																																				          </div> 																																																	          <br>																																																		          <div class='form-group'>																																													          <label class='text' for='Password2'><b>Confirmar Código</b></label>																																		          <br>																																																		          <input type='password' class='form-control' id='Password2'>																																				          </div>																																																	          </form>", function (result) {
+
+							if($('#Password1').val() == $('#Password2').val())
+							{
+								var code = $('#Password1').val();
+
+								var obj = {};
+
+								var rows = document.getElementById('tb')
+					                 .getElementsByTagName('tbody')[0]
+					                  .getElementsByTagName('tr');
+
+							    for (i = 0; i < rows.length; i++) 
+							    {
+							        rows[i].onclick = function () {
+							        	
+							            var mail = document.getElementById('tb')
+						                 .getElementsByTagName('tbody')[0]
+						                  .getElementsByTagName('tr')[this.rowIndex]
+						                  .getElementsByTagName('td')[1]
+						                  .innerHTML;
+
+						                console.log(mail + ":" + code); 
+
+						                obj[mail] = code;
+
+										chrome.storage.local.set(obj);
+
+										bootbox.alert("<br><div class='text'><b>Dados alterados com sucesso.</b></div>");
+
+										getData();
+							        }
+							    }
+							}
+							else
+							{
+								bootbox.alert("<br><div class='text'><b>Os códigos inseridos não são iguais. <br><br>Tente de novo.</b></div>");
+							}
+			});	
+}
+
 
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('button').addEventListener('click', clickHandler);
