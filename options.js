@@ -20,14 +20,23 @@ function getData()
 
 		document.getElementById('table-print').innerHTML = table;
 
+
 		$('button#remove').on('click',function(){
 
-			removeUser();
+			var td = $(this).closest('td').parent()[0];
+
+			var mail = td.getElementsByTagName('td')[1].innerHTML;
+
+			removeUser(mail);
 		});
 
 		$('button#edit').on('click',function(){
 			
-			editUser();
+			var td = $(this).closest('td').parent()[0];
+
+			var mail = td.getElementsByTagName('td')[1].innerHTML;
+
+			editUser(mail);
 		});
 
 	});
@@ -52,110 +61,88 @@ function returnData(Email)
 
 function clickHandler(e) 
 {
-	bootbox.confirm("<form role='form'>																																														  <br><br>																																																		        <div class='title'>																																															          <h3><b>Instruções</b></h3>																																													        </div>																																																		          <br>																																																			        <div class='text'>O Email escolhido deve ser <b>obrigatoriamente</b> igual ao Email do Facebook; <br><br>O Código só deve conter números entre <b>0</b> e <b>9</b>;											          </div>																																																		        <br><br>																																																		      <div class='form-group'>																																														        <label class='text' for='Email'><b>Email</b></label>																																							      <br>																																																		            <input type='email' class='form-control' id='Email'>																																							      </div>																																																		        <br>																																																			      <div class='form-group'>																																														        <label class='text' for='Password1'><b>Código</b></label>																																						      <br>																																																			        <input type='password' class='form-control' id='Password1'>																																					          </div> 																																																		        <br>																																																			      <div class='form-group'>																																														        <label class='text' for='Password2'><b>Confirmar Código</b></label>																																			          <br>																																																			        <input type='password' class='form-control' id='Password2'>																																					          </div>																																																		        </form>", function(result) {
+	bootbox.confirm("<form role='form'>																																													     	    <div class='title'>																																															       <h3><b>Instruções</b></h3>																																													       </div>																																																		       <br>																																																			       <div class='text'>O Email escolhido deve ser <b>obrigatoriamente</b> igual ao Email do Facebook; <br><br>O Código só deve conter números entre <b>0</b> e <b>9</b>;											       </div>																																																		       <br><br>																																																		       <div class='form-group'>																																														       <label class='text' for='Email'><b>Email</b></label>																																							       <br>																																																		       <input type='email' class='form-control' id='Email'>																																							       </div>																																																		       <br>																																																			       <div class='form-group'>																																														       <label class='text' for='Password1'><b>Código</b></label>																																						   <br>																																																			       <input type='password' class='form-control' id='Password1'>																																					       </div> 																																																		       <br>																																																			       <div class='form-group'>																																														       <label class='text' for='Password2'><b>Confirmar Código</b></label>																																			       <br>																																																			       <input type='password' class='form-control' id='Password2'>																																					       </div>																																																		       </form>", function(result) {
 
-			var obj = {};
-			var email = $('#Email').val();
-			var code = $('#Password1').val();
+					if(result)
+					{
+						var obj = {};
+						var email = $('#Email').val();
+						var code = $('#Password1').val();
 
-			//Primeiro vamos verificar se já não existe um utilizador registado com o mesmo e-mail
+						//Primeiro vamos verificar se já não existe um utilizador registado com o mesmo e-mail
 
-			chrome.storage.local.get(email, function (result) {
+						chrome.storage.local.get(email, function (result) {
 
-			var res = result.Email;
+							var res = result.Email;
 
-			if(res)
-			{
-				bootbox.alert("<br><div class='text'><b>Já existe um utilizador com o mesmo Email registado.</b></div>");
-			}
-			else
-			{
-				if($('#Password1').val() == $('#Password2').val())
-				{
-					obj[email] = code;
+							if(res)
+							{
+								bootbox.alert("<br><div class='text'><b>Já existe um utilizador com o mesmo Email registado.</b></div>");
+							}
+							else
+							{
+								if($('#Password1').val() == $('#Password2').val())
+								{
+									obj[email] = code;
 
-					chrome.storage.local.set(obj);
+									chrome.storage.local.set(obj);
 
-					bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
+									bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
 
-					getData();
-				}
-				else
-				{
-					bootbox.alert("<br><div class='text'><b>Os códigos inseridos não são iguais. <br><br>Tente de novo.</b></div>");
-				}
-			}
-		});
+									getData();
+								}
+								else
+								{
+									bootbox.alert("<br><div class='text'><b>Os códigos inseridos não são iguais. <br><br>Tente de novo.</b></div>");
+								}
+							}
+						});
+					}
 		});
 }
 
-function removeUser()
+function removeUser(Email)
 {
-	var rows = document.getElementById('tb')
-                 .getElementsByTagName('tbody')[0]
-                  .getElementsByTagName('tr');
+	bootbox.confirm("<div class='text'><b>Utilizador prestes a ser removido. <br><br>Deseja continuar?</b></div>", function(result) {
 
-    for (i = 0; i < rows.length; i++) 
-    {
-        rows[i].onclick = function () {
-        
-            var mail = document.getElementById('tb')
-             .getElementsByTagName('tbody')[0]
-              .getElementsByTagName('tr')[this.rowIndex]
-              .getElementsByTagName('td')[1]
-              .innerHTML;
-
-            chrome.storage.local.remove(mail, function() {
+		if(result)
+		{
+			chrome.storage.local.remove(Email, function() {
 
 				bootbox.alert("<br><div class='text'><b>Utilizador removido com sucesso</b></div>");
 
 				getData();
 
 			});
-        }
-    }
+		}
+	});
 }
 
-function editUser()
+function editUser(Email)
 {
-	bootbox.confirm("<form role='form'>																																														          <br><br>																																																	          <div class='text'>O Código só deve conter números entre <b>0</b> e <b>9</b>.</div>																														          <br><br>																																																	          <div class='form-group'>																																													          <label class='text' for='Password1'><b>Código</b></label>																																					          <br>																																																		          <input type='password' class='form-control' id='Password1'>																																				          </div> 																																																	          <br>																																																		          <div class='form-group'>																																													          <label class='text' for='Password2'><b>Confirmar Código</b></label>																																		          <br>																																																		          <input type='password' class='form-control' id='Password2'>																																				          </div>																																																	          </form>", function (result) {
+	bootbox.confirm("<form role='form'>																																																  <div class='text'>O Código só deve conter números entre <b>0</b> e <b>9</b>.</div>																														          <br><br>																																																	          <div class='form-group'>																																													          <label class='text' for='Password1'><b>Código</b></label>																																					          <br>																																																		          <input type='password' class='form-control' id='Password1'>																																				          </div> 																																																	          <br>																																																		          <div class='form-group'>																																													          <label class='text' for='Password2'><b>Confirmar Código</b></label>																																		          <br>																																																		          <input type='password' class='form-control' id='Password2'>																																				          </div>																																																	          </form>", function (result) {
 
+						if(result)
+						{
 							if($('#Password1').val() == $('#Password2').val())
 							{
 								var code = $('#Password1').val();
 
 								var obj = {};
 
-								var rows = document.getElementById('tb')
-					                 .getElementsByTagName('tbody')[0]
-					                  .getElementsByTagName('tr');
+				                obj[Email] = code;
 
-							    for (i = 0; i < rows.length; i++) 
-							    {
-							        rows[i].onclick = function () {
-							        	
-							            var mail = document.getElementById('tb')
-						                 .getElementsByTagName('tbody')[0]
-						                  .getElementsByTagName('tr')[this.rowIndex]
-						                  .getElementsByTagName('td')[1]
-						                  .innerHTML;
+								chrome.storage.local.set(obj);
 
-						                console.log(mail + ":" + code); 
+								bootbox.alert("<br><div class='text'><b>Dados alterados com sucesso.</b></div>");
 
-						                obj[mail] = code;
-
-										chrome.storage.local.set(obj);
-
-										bootbox.alert("<br><div class='text'><b>Dados alterados com sucesso.</b></div>");
-
-										getData();
-							        }
-							    }
+								getData();
 							}
 							else
 							{
 								bootbox.alert("<br><div class='text'><b>Os códigos inseridos não são iguais. <br><br>Tente de novo.</b></div>");
 							}
+						}
 			});	
 }
 
