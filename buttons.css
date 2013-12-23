@@ -1,11 +1,13 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,latin-ext);
+
 .title
 {
-	font-family: 'Graduate', cursive;
+	font-family: 'Roboto', sans-serif;
 }
 
 .text
 {
-	font-family: 'Graduate', cursive;
+	font-family: 'Roboto', sans-serif;
 	font-size: 13px;
 }
 
@@ -14,7 +16,7 @@
 	width: 25;
 	height: 15;
   	margin-right: 16px;
-  	font-family: 'Graduate', cursive;
+  	font-family: 'Roboto', sans-serif;
     font-size: 12px;
 }
 
@@ -22,7 +24,7 @@
 {
 	width: 25;
 	height: 15;
-	font-family: 'Graduate', cursive;
+	font-family: 'Roboto', sans-serif;
     font-size: 12px;
 }
 
