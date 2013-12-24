@@ -38,3 +38,9 @@
 {
     visibility: hidden;
 }
+
+.center-table
+{
+  margin: 0 auto;
+  float: none;
+}

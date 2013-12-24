@@ -1,7 +1,6 @@
 $(document).ready(function() 
 {
-
-	$('.loginbutton').on('click', function() {
+	$('.u_0_d').on('click', function() {
 
 		var mail = document.getElementById(email);
 
