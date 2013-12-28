@@ -44,3 +44,9 @@
   margin: 0 auto;
   float: none;
 }
+
+.center-div{
+	width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}

@@ -4,8 +4,8 @@
 
 	<title>Facebook Guardian</title>
 
-	<link rel="stylesheet" type="text/css" href="./buttons.css" />
 	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="./buttons.css" />
 	
 	<script src="jquery-2.0.3.js"></script>
 	<script src="jquery-2.0.3.min.js"></script>
@@ -19,17 +19,18 @@
 	
 	<br>
 
-	<div style='text-align:center'>
+	<div class="content">
 		
-		<h3 class='title'><b>Opções</b></h3>
+		<h3 class='title text-center'><b>Opções</b></h3>
 
 		<br><br>
-
-		<div id='table-print'></div>
-
-		<br><br>
-
-		<button id="new_user" type="button" class="btn btn-primary btn-lg">Novo Utilizador</button>
+		<div class="row">
+			<div style="text-align:right;" class="center-div">
+				<button id="new_user" type="button" class="btn btn-primary">Novo Utilizador</button>
+				<br><br>
+				<div class="text-center" id='table-print'></div>
+			</div>
+		</div>
 
 	</div>
 
