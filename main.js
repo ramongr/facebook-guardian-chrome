@@ -1,73 +1,82 @@
 $(document).ready(function() 
 {
-	$('.u_0_d').on('click', function() {
+  	var x, flag = 0, codigo = 0;
 
-		var mail = document.getElementById(email);
+  	//Obter o id de utilizador através do cookie
 
-		console.log(mail);
-	});
+	var cookie = "c_user=";
+    var ca = document.cookie.split(';');
+    var id;
 
-  	var x = 1234, flag = 0;
-
-	$('._42ft.selected')
-		.attr('type', 'button')
-		.on('click',function() {
-
-		//Obter o id de utilizador através do cookie
-
-		var cookie = "c_user=";
-	    var ca = document.cookie.split(';');
-	    var id;
-
-	    for(var i=0;i < ca.length;i++) {
-	        var c = ca[i];
-	        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-	        if (c.indexOf(cookie) == 0) id = c.substring(cookie.length,c.length);
-	    }
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(cookie) == 0) id = c.substring(cookie.length,c.length);
+    }
 	    
-	    //Guardar o id através do chrome storage para pode ser usado na página das opções
 
-	    var obj = {};
+  	//Guardar o id da sessão actual através do chrome storage para ser usado na página das opções e para pesquisar se existe um user registado com esse id
 
-	    obj['c_user'] = id;
+    var obj = {};
 
-		chrome.storage.local.set(obj);
+    obj['c_user'] = id;
+
+	chrome.storage.local.set(obj);
 
 
-		chrome.storage.local.get('c_user', function (result) {
+	//Vamos obter todos os users guardados e comparar o seu id com o id da sessão actual
 
-			console.log(result['c_user']);
-		});
+	chrome.storage.local.get(null, function(items) {
 
-		/*if(flag==0)
+	    var allKeys = Object.keys(items);
+
+	    for (var i = 1; i < allKeys.length; i++) 
 		{
-			bootbox.confirm("<div style='text-align:center'>                                                                                                                                                                  <h3 class='title'><b>Insira o código</b></h3>                                                                                                                                                                 <br><br>																																																	  <input id='code' type='password' class='input form-control'>																																				    <br><br>																																																      <button id='num' value='1' type='button' class='buttons-left-middle btn btn-default'> 1 </button>																											    <button id='num' value='2' type='button' class='buttons-left-middle btn btn-default'> 2 </button>																									          <button id='num' value='3' type='button' class='buttons-right btn btn-default'> 3 </button>																													<br><br>																																																	  <button id='num' value='4' type='button' class='buttons-left-middle btn btn-default'> 4 </button>																											    <button id='num' value='5' type='button' class='buttons-left-middle btn btn-default'> 5 </button>																										      <button id='num' value='6' type='button' class='buttons-right btn btn-default'> 6 </button>																													<br><br>																																																      <button id='num' value='7' type='button' class='buttons-left-middle btn btn-default'> 7 </button>																								                <button id='num' value='8' type='button' class='buttons-left-middle btn btn-default'> 8 </button>																						                      <button id='num' value='9' type='button' class='buttons-right btn btn-default'> 9 </button>																												    <br><br>																																																      <button id='num' value='0' type='button' class='buttons-right btn btn-default'> 0 </button>																													</div>", function(result) {
-
-					if(result)
-					{
-						if(x == $('#code').val())
-						{
-							$('._42ft.selected')
-								.attr('type', 'submit')
-								.trigger('click');
-							
-							flag=1;
-						}
-						else
-						{
-							bootbox.alert("<br><div style='text-align:center' class='title'><h3><b>Código errado</b></h3></div>");
-						}
-					}
-				});
-
-				$('button#num').on('click',function(){
-					x = $('#code').val();
-					$('#code').val(x+$(this).val());
-				});
+			if(items['id'] == id)
+			{
+				codigo = items[allKeys[i]];
+			}
 		}
-		else
+
+		// Se o código for diferente de 0 significa que o utilizador está registado e como tal aparece a janela para introduzir o código
+
+		if(codigo != 0)
 		{
-			flag = 0;
-		}*/
+			$('._42ft.selected')
+				.attr('type', 'button')
+				.on('click',function() {
+
+				if(flag == 0)
+				{
+					bootbox.confirm("<div style='text-align:center'>                                                                                                                                                                  <h3 class='title'><b>Insira o código</b></h3>                                                                                                                                                                 <br><br>																																																	  <input id='code' type='password' class='input form-control'>																																				    <br><br>																																																      <button id='num' value='1' type='button' class='buttons-left-middle btn btn-default'> 1 </button>																											    <button id='num' value='2' type='button' class='buttons-left-middle btn btn-default'> 2 </button>																									          <button id='num' value='3' type='button' class='buttons-right btn btn-default'> 3 </button>																													<br><br>																																																	  <button id='num' value='4' type='button' class='buttons-left-middle btn btn-default'> 4 </button>																											    <button id='num' value='5' type='button' class='buttons-left-middle btn btn-default'> 5 </button>																										      <button id='num' value='6' type='button' class='buttons-right btn btn-default'> 6 </button>																													<br><br>																																																      <button id='num' value='7' type='button' class='buttons-left-middle btn btn-default'> 7 </button>																								                <button id='num' value='8' type='button' class='buttons-left-middle btn btn-default'> 8 </button>																						                      <button id='num' value='9' type='button' class='buttons-right btn btn-default'> 9 </button>																												    <br><br>																																																      <button id='num' value='0' type='button' class='buttons-right btn btn-default'> 0 </button>																													</div>", function(result) {
+
+							if(result)
+							{
+								if(codigo == $('#code').val())
+								{
+									flag = 1;
+
+									$('._42ft.selected')
+										.attr('type', 'submit')
+										.trigger('click');
+								}
+								else
+								{
+									bootbox.alert("<br><div style='text-align:center' class='title'><h3><b>Código errado</b></h3></div>");
+								}
+							}
+						});
+
+						$('button#num').on('click',function(){
+							x = $('#code').val();
+							$('#code').val(x+$(this).val());
+						});
+				}
+				else
+				{
+					flag = 0;
+				}
+			});
+		}
 	});
 });

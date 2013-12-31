@@ -1,6 +1,7 @@
 function getData()
 {
 	chrome.storage.local.get(null, function(items) {
+
 	    var allKeys = Object.keys(items);
 	    //console.log(allKeys);
 
@@ -8,18 +9,15 @@ function getData()
 
 		table += "<tr>																																																		  <td style='text-align: center;'><b> # </b></td>																																					              <td style='text-align: center;'><b> E-Mail </b></td>																																				  <td style='text-align: center;'><b> Código </b></td>																																				              <td style='text-align: center;'><b> Edição </b></td>																																				  </tr>"
 
-		for (var i = 0; i < allKeys.length; i++) 
+		for (var i = 1; i < allKeys.length; i++) 
 		{
-			var Email = allKeys[i];
-
-			table += "<tr><td style='text-align: center;'>" 																																					              + (i+1) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>" 																																		                  + items[allKeys[i]] + 																																														"</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button id='remove' type='button' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button></td></tr>";
+			table += "<tr><td style='text-align: center;'>" 																																					              + (i) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>" 																																		                  + items[allKeys[i]] + 																																														"</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button id='remove' type='button' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button></td></tr>";
 			
 		}
 
 		table += "</table>";
 
 		document.getElementById('table-print').innerHTML = table;
-
 
 		$('button#remove').on('click',function(){
 
@@ -41,22 +39,6 @@ function getData()
 
 	});
 	
-}
-
-function setData()
-{
-	chrome.storage.local.set({'megajpc': '123'});
-	chrome.storage.local.set({'ramon': '456'});
-	chrome.storage.local.set({'sandra': '789'});
-	chrome.storage.local.set({'sofia': '0'});
-}
-
-function returnData(Email)
-{
-	chrome.storage.local.get(Email, function (result) {
-
-		console.log(Email, result[Email]);
-	});
 }
 
 function clickHandler(e) 
@@ -82,14 +64,20 @@ function clickHandler(e)
 							else
 							{
 								if($('#Password1').val() == $('#Password2').val())
-								{
-									obj[email] = code;
+								{	
+									chrome.storage.local.get('c_user', function (result) {
 
-									chrome.storage.local.set(obj);
+										obj[email] = code;
+										obj['id'] = result['c_user'];
 
-									bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
+										chrome.storage.local.set(obj);
 
-									getData();
+										bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
+
+										chrome.storage.local.remove('c_user', function() {});
+
+										getData();
+									});
 								}
 								else
 								{
@@ -146,9 +134,41 @@ function editUser(Email)
 			});	
 }
 
+//Funções para testes
+
+function setData()
+{
+	chrome.storage.local.set({'megajpc': '123'});
+	chrome.storage.local.set({'ramon': '456'});
+	chrome.storage.local.set({'sandra': '789'});
+	chrome.storage.local.set({'sofia': '0'});
+}
+
+function returnData(Email)
+{
+	chrome.storage.local.get(Email, function (result) {
+
+		console.log(Email, result[Email]);
+	});
+}
+
+function getAll()
+{
+	chrome.storage.local.get(null, function(items) {
+
+	    var allKeys = Object.keys(items);
+
+	    for (var i = 1; i < allKeys.length; i++) 
+		{
+			console.log(i + ", " + allKeys[i] + ", " + items[allKeys[i]] + ", " + items['id']);
+		}
+
+	});
+}
 
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('button').addEventListener('click', clickHandler);
   getData();
+  getAll();
 });
 	
