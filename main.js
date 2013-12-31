@@ -1,6 +1,6 @@
 $(document).ready(function() 
 {
-  	var x, flag = 0, codigo = 0;
+  	var x, flag = 0, codigo = null;
 
   	//Obter o id de utilizador através do cookie
 
@@ -8,10 +8,15 @@ $(document).ready(function()
     var ca = document.cookie.split(';');
     var id;
 
-    for(var i=0;i < ca.length;i++) {
+    for(var i=0; i < ca.length; i++) 
+    {
         var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(cookie) == 0) id = c.substring(cookie.length,c.length);
+
+        while (c.charAt(0)==' ') 
+        	c = c.substring(1,c.length);
+
+        if (c.indexOf(cookie) == 0) 
+        	id = c.substring(cookie.length,c.length);
     }
 	    
 
@@ -34,13 +39,13 @@ $(document).ready(function()
 		{
 			if(items['id'] == id)
 			{
-				codigo = items[allKeys[i]];
+				codigo = _.cloneDeep(items[allKeys[i]]);
 			}
 		}
 
 		// Se o código for diferente de 0 significa que o utilizador está registado e como tal aparece a janela para introduzir o código
 
-		if(codigo != 0)
+		if(_.isEmpty(codigo) == false)
 		{
 			$('._42ft.selected')
 				.attr('type', 'button')
@@ -52,7 +57,7 @@ $(document).ready(function()
 
 							if(result)
 							{
-								if(codigo == $('#code').val())
+								if(_.isEqual(codigo, CryptoJS.SHA3($('#code').val())))
 								{
 									flag = 1;
 

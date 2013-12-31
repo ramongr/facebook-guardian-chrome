@@ -67,7 +67,7 @@ function clickHandler(e)
 								{	
 									chrome.storage.local.get('c_user', function (result) {
 
-										obj[email] = code;
+										obj[email] = CryptoJS.SHA3(code);
 										obj['id'] = result['c_user'];
 
 										chrome.storage.local.set(obj);
@@ -118,7 +118,7 @@ function editUser(Email)
 
 								var obj = {};
 
-				                obj[Email] = code;
+				                obj[Email] = CryptoJS.SHA3(code);
 
 								chrome.storage.local.set(obj);
 
@@ -166,9 +166,18 @@ function getAll()
 	});
 }
 
+function teste()
+{
+	var a = CryptoJS.SHA3('123');
+	var b = CryptoJS.SHA3('456');
+	var c = CryptoJS.SHA3('123');
+
+	console.log(_.isEqual(a, b));
+	console.log(_.isEqual(a, c));
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('button').addEventListener('click', clickHandler);
   getData();
-  getAll();
 });
 	
