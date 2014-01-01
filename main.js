@@ -18,18 +18,8 @@ $(document).ready(function()
         if (c.indexOf(cookie) == 0) 
         	id = c.substring(cookie.length,c.length);
     }
-	    
 
-  	//Guardar o id da sessão actual através do chrome storage para ser usado na página das opções e para pesquisar se existe um user registado com esse id
-
-    var obj = {};
-
-    obj['c_user'] = id;
-
-	chrome.storage.local.set(obj);
-
-
-	//Vamos obter todos os users guardados e comparar o seu id com o id da sessão actual
+	//Vamos obter todos os users guardados e comparar o seu id com o id da sessão actual. Se não existir vamos guardar o id através do chrome storage para a possibilidade ser criada uma nova conta com esse id
 
 	chrome.storage.local.get(null, function(items) {
 
@@ -82,6 +72,14 @@ $(document).ready(function()
 					flag = 0;
 				}
 			});
+		}
+		else
+		{
+			var obj = {};
+
+		    obj['c_user'] = id;
+
+			chrome.storage.local.set(obj);
 		}
 	});
 });

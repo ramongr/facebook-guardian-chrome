@@ -43,7 +43,7 @@ function getData()
 
 function clickHandler(e) 
 {
-	bootbox.confirm("<form role='form'>																																													     	    <div class='title'>																																															       <h3><b>Instruções</b></h3>																																													       </div>																																																		       <br>																																																			       <div class='text'>O Email escolhido deve ser <b>obrigatoriamente</b> igual ao Email do Facebook; <br><br>O Código só deve conter números entre <b>0</b> e <b>9</b>;											       </div>																																																		       <br><br>																																																		       <div class='form-group'>																																														       <label class='text' for='Email'><b>Email</b></label>																																							       <br>																																																		       <input style='width: 400px;' type='email' class='form-control' id='Email'>																																							       </div>																																																		       <br>																																																			       <div class='form-group'>																																														       <label class='text' for='Password1'><b>Código</b></label>																																						   <br>																																																			       <input style='width: 400px;' type='password' class='form-control' id='Password1'>																																					       </div> 																																																		       <br>																																																			       <div class='form-group'>																																														       <label class='text' for='Password2'><b>Confirmar Código</b></label>																																			       <br>																																																			       <input style='width: 400px;' type='password' class='form-control' id='Password2'>																																					       </div>																																																		       </form>", function(result) {
+	bootbox.confirm("<form role='form'>																																													     	    <div class='title'>																																															       <h3><b>Instruções</b></h3>																																													       </div>																																																		       <br>																																																			       <div class='text'><font color='red'>Para criar um novo utilizador, é <b>obrigatório</b> iniciar previamente a sua sessão no Facebook;</font><br><br>O Email escolhido deve ser <b>obrigatoriamente</b> igual ao Email do Facebook; <br><br>O Código só deve conter números entre <b>0</b> e <b>9</b>;											       </div>																																																		       <br><br>																																																		       <div class='form-group'>																																														       <label class='text' for='Email'><b>Email</b></label>																																							       <br>																																																		       <input style='width: 400px;' type='email' class='form-control' id='Email'>																																							       </div>																																																		       <br>																																																			       <div class='form-group'>																																														       <label class='text' for='Password1'><b>Código</b></label>																																						   <br>																																																			       <input style='width: 400px;' type='password' class='form-control' id='Password1'>																																					       </div> 																																																		       <br>																																																			       <div class='form-group'>																																														       <label class='text' for='Password2'><b>Confirmar Código</b></label>																																			       <br>																																																			       <input style='width: 400px;' type='password' class='form-control' id='Password2'>																																					       </div>																																																		       </form>", function(result) {
 
 					if(result)
 					{
@@ -51,38 +51,45 @@ function clickHandler(e)
 						var email = $('#Email').val();
 						var code = $('#Password1').val();
 
-						//Primeiro vamos verificar se já não existe um utilizador registado com o mesmo e-mail
+						//Primeiro vamos verificar se já existe um utilizador registado com o mesmo e-mail
 
 						chrome.storage.local.get(email, function (result) {
 
-							var res = result.Email;
-
-							if(res)
+							if(result)
 							{
 								bootbox.alert("<br><div class='text'><b>Já existe um utilizador com o mesmo Email registado.</b></div>");
 							}
 							else
 							{
-								if($('#Password1').val() == $('#Password2').val())
-								{	
-									chrome.storage.local.get('c_user', function (result) {
+								//Se não houver uma sessão aberta do facebook, é devolvido um erro
 
-										obj[email] = CryptoJS.SHA3(code);
-										obj['id'] = result['c_user'];
+								chrome.storage.local.get('c_user', function (result) {
 
-										chrome.storage.local.set(obj);
+									if(_.isEmpty(result['c_user']))
+									{
+										bootbox.alert("<br><div class='text'><b>Não existe uma sessão aberta do Facebook.<br><br>Inicie a sua sessão e tente de novo.</b></div>");
+									}
+									else
+									{
+										if($('#Password1').val() == $('#Password2').val())
+										{	
+											obj[email] = CryptoJS.SHA3(code);
+											obj['id'] = result['c_user'];
 
-										bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
+											chrome.storage.local.set(obj);
 
-										chrome.storage.local.remove('c_user', function() {});
+											bootbox.alert("<br><div class='text'><b>Dados guardados com sucesso.</b></div>");
 
-										getData();
-									});
-								}
-								else
-								{
-									bootbox.alert("<br><div class='text'><b>Os códigos inseridos não são iguais. <br><br>Tente de novo.</b></div>");
-								}
+											chrome.storage.local.remove('c_user', function() {});
+
+											getData();
+										}
+										else
+										{
+											bootbox.alert("<br><div class='text'><b>Os códigos inseridos não são iguais. <br><br>Tente de novo.</b></div>");
+										}
+									}
+								});
 							}
 						});
 					}
