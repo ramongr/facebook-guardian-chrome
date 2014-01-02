@@ -7,17 +7,29 @@ function getData()
 
 	    var table = "<table id='tb' class='text table table-striped'>";
 
-		table += "<tr>																																																		  <td style='text-align: center;'><b> # </b></td>																																					              <td style='text-align: center;'><b> E-Mail </b></td>																																				  <td style='text-align: center;'><b> Código </b></td>																																				              <td style='text-align: center;'><b> Edição </b></td>																																				  </tr>"
+		table += "<tr>																																																		  <td style='text-align: center;'><b> # </b></td>																																					              <td style='text-align: center;'><b> E-Mail </b></td>																													              <td style='text-align: center;'><b> Edição </b></td>																																				  </tr>"
+		var index = 1;
 
 		for (var i = 1; i < allKeys.length; i++) 
 		{
-			table += "<tr><td style='text-align: center;'>" 																																					              + (i) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>" 																																		                  + items[allKeys[i]] + 																																														"</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button id='remove' type='button' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button></td></tr>";
-			
+			var n = allKeys[i].search('id-');
+
+			if(n == -1)
+			{
+				table += "<tr><td style='text-align: center;'>" 																																					              + (index) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' data-toggle='tooltip' data-original-title='Editar Código' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button style='margin-right: 10px;' id='remove' type='button' data-toggle='tooltip' data-original-title='Remover Utilizador' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button>                  <button id='new-code' type='button' data-toggle='tooltip' data-original-title='Recuperar Código' class='btn btn-primary'><span class='glyphicon glyphicon-envelope'></span></button></td></tr>";
+
+				index++;
+			}
 		}
 
 		table += "</table>";
 
 		document.getElementById('table-print').innerHTML = table;
+
+		$('button#new-code').tooltip('hide');
+		$('button#edit').tooltip('hide');
+		$('button#remove').tooltip('hide');
+
 
 		$('button#remove').on('click',function(){
 
@@ -37,6 +49,14 @@ function getData()
 			editUser(mail);
 		});
 
+		$('button#new-code').on('click',function(){
+			
+			var td = $(this).closest('td').parent()[0];
+
+			var mail = td.getElementsByTagName('td')[1].innerHTML;
+
+			recoverCode(mail);
+		});
 	});
 	
 }
@@ -77,7 +97,7 @@ function clickHandler(e)
 
 							    for (var i = 1; i < allKeys.length; i++) 
 								{
-									if(items['id'] == result['c_user'])
+									if(items['id-'+allKeys[i]] == result['c_user'])
 									{
 										flag = 1;
 									}
@@ -88,7 +108,7 @@ function clickHandler(e)
 									if($('#Password1').val() == $('#Password2').val())
 									{	
 										obj[email] = CryptoJS.SHA3(code);
-										obj['id'] = result['c_user'];
+										obj['id-'+email] = result['c_user'];
 
 										chrome.storage.local.set(obj);
 
@@ -138,7 +158,7 @@ function removeUser(Email)
 						{
 							chrome.storage.local.remove(Email, function() {
 
-								chrome.storage.local.remove('id', function() {});
+								chrome.storage.local.remove('id-'+Email, function() {});
 
 								bootbox.alert("<br><div class='text'><b>Utilizador removido com sucesso</b></div>");
 
@@ -196,6 +216,14 @@ function editUser(Email)
 	});	
 }
 
+function recoverCode(Email)
+{
+	bootbox.confirm("<div class='text'><b>Caso não se recorde do seu código, é possível receber um novo através do E-mail registado.<br><br>Deseja continuar?</b></div>", function(result) {
+
+		console.log(Math.floor((Math.random()*100)+1));
+	});
+}
+
 
 //Funções para testes
 
@@ -221,9 +249,9 @@ function getAll()
 
 	    var allKeys = Object.keys(items);
 
-	    for (var i = 1; i < allKeys.length; i++) 
+	    for (var i = 0; i < allKeys.length; i++) 
 		{
-			console.log(i + ", " + allKeys[i] + ", " + items[allKeys[i]] + ", " + items['id']);
+			console.log(i + ", " + allKeys[i] + ", " + items[allKeys[i]] + ", " + items['id-'+allKeys[i]]);
 		}
 
 	});
