@@ -216,12 +216,37 @@ function editUser(Email)
 	});	
 }
 
+function sendMail(Email, Code) 
+{
+	var param = {
+            "email": Email,
+            "code": Code
+    };
+
+    $.ajax({
+        url: 'http://megajpc.net23.net/Email.php',
+        data: param,
+        type: 'POST',
+        success: function (data) {}
+    });
+}
+
 function recoverCode(Email)
 {
-	bootbox.confirm("<div class='text'><b>Caso não se recorde do seu código, é possível receber um novo através do E-mail registado.<br><br>Deseja continuar?</b></div>", function(result) {
+	//bootbox.confirm("<div class='text'><b>Caso não se recorde do seu código, é possível receber um novo através do E-mail registado.<br><br>Deseja continuar?</b></div>", function(result) {
 
-		console.log(Math.floor((Math.random()*100)+1));
-	});
+		var code = Math.floor((Math.random()*1000000)+1);
+
+		var obj = {};
+
+        obj[Email] = CryptoJS.SHA3(code.toString());
+
+		chrome.storage.local.set(obj);
+
+		//sendMail(Email, code);
+
+		//bootbox.alert("<br><div class='text'><b></b></div>");
+	//});
 }
 
 
