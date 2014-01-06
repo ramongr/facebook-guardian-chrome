@@ -13,10 +13,23 @@ function getData()
 		for (var i = 1; i < allKeys.length; i++) 
 		{
 			var n = allKeys[i].search('id-');
+			var m = allKeys[i].search('atv-');
 
-			if(n == -1)
+			if(n == -1 && m == -1)
 			{
-				table += "<tr><td style='text-align: center;'>" 																																					              + (index) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' data-toggle='tooltip' data-original-title='Editar Código' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button style='margin-right: 10px;' id='remove' type='button' data-toggle='tooltip' data-original-title='Remover Utilizador' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button>                  <button id='new-code' type='button' data-toggle='tooltip' data-original-title='Recuperar Código' class='btn btn-primary'><span class='glyphicon glyphicon-envelope'></span></button></td></tr>";
+				table += "<tr><td style='text-align: center;'>" 																																					              + (index) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' data-toggle='tooltip' data-original-title='Editar Código' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button style='margin-right: 10px;' id='remove' type='button' data-toggle='tooltip' data-original-title='Remover Utilizador' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button>                  <button style='margin-right: 10px;' id='new-code' type='button' data-toggle='tooltip' data-original-title='Recuperar Código' class='btn btn-primary'><span class='glyphicon glyphicon-envelope'></span></button>";
+
+				
+				//Se a conta estiver ativada, mostra-se o botão verde "ON" e ao carregar nele a conta fica desativada.
+
+				if(items['atv-'+allKeys[i]] == '0')
+				{
+					table += "<button style='font-size:11px' id='on' type='button' data-toggle='tooltip' data-original-title='Desativar Conta' class='text btn btn-success'>ON</button></td></tr>";
+				}
+				else
+				{
+					table += "<button style='font-size:11px' id='off' type='button' data-toggle='tooltip' data-original-title='Ativar Conta' class='text btn btn-danger'>OFF</button></td></tr>";
+				}
 
 				index++;
 			}
@@ -29,7 +42,27 @@ function getData()
 		$('button#new-code').tooltip('hide');
 		$('button#edit').tooltip('hide');
 		$('button#remove').tooltip('hide');
+		$('button#on').tooltip('hide');
+		$('button#off').tooltip('hide');
 
+
+		$('button#on').on('click',function(){
+
+			var td = $(this).closest('td').parent()[0];
+
+			var mail = td.getElementsByTagName('td')[1].innerHTML;
+
+			User_OFF(mail);
+		});
+
+		$('button#off').on('click',function(){
+
+			var td = $(this).closest('td').parent()[0];
+
+			var mail = td.getElementsByTagName('td')[1].innerHTML;
+
+			User_ON(mail);
+		});
 
 		$('button#remove').on('click',function(){
 
@@ -109,6 +142,7 @@ function clickHandler(e)
 									{	
 										obj[email] = CryptoJS.SHA3(code);
 										obj['id-'+email] = result['c_user'];
+										obj['atv-'+email] = '0';
 
 										chrome.storage.local.set(obj);
 
@@ -241,12 +275,70 @@ function recoverCode(Email)
 
         obj[Email] = CryptoJS.SHA3(code.toString());
 
-		chrome.storage.local.set(obj);
+		//chrome.storage.local.set(obj);
 
 		//sendMail(Email, code);
 
 		//bootbox.alert("<br><div class='text'><b></b></div>");
 	//});
+}
+
+function User_ON(Email)
+{
+	bootbox.confirm("<form role='form'>																																																  <div class='text'><b>Introduza o seu código.</b></div><br>																																					      <div class='form-group'>																																													          <input style='width: 300px;' type='password' class='form-control' id='Password'>																																	  </div></form>", function (result) {
+
+		if(result)
+		{
+			chrome.storage.local.get(Email, function (result) {
+
+				var pass = CryptoJS.SHA3($('#Password').val()); 
+
+				if(_.isEqual(pass, result[Email]))
+				{
+					var obj = {};
+
+				    obj['atv-'+Email] = '0';
+
+					chrome.storage.local.set(obj);
+
+					getData();
+				}
+				else
+				{
+					bootbox.alert("<br><div class='text'><b>O código introduzido está errado. <br><br>Tente de novo.</b></div>");
+				}
+			});
+		}
+	});
+}
+
+function User_OFF(Email)
+{
+	bootbox.confirm("<form role='form'>																																																  <div class='text'><b>Introduza o seu código.</b></div><br>																																					      <div class='form-group'>																																													          <input style='width: 300px;' type='password' class='form-control' id='Password'>																																	  </div></form>", function (result) {
+
+		if(result)
+		{
+			chrome.storage.local.get(Email, function (result) {
+
+				var pass = CryptoJS.SHA3($('#Password').val()); 
+
+				if(_.isEqual(pass, result[Email]))
+				{
+					var obj = {};
+
+				    obj['atv-'+Email] = '1';
+
+					chrome.storage.local.set(obj);
+
+					getData();
+				}
+				else
+				{
+					bootbox.alert("<br><div class='text'><b>O código introduzido está errado. <br><br>Tente de novo.</b></div>");
+				}
+			});
+		}
+	});
 }
 
 
@@ -276,7 +368,7 @@ function getAll()
 
 	    for (var i = 0; i < allKeys.length; i++) 
 		{
-			console.log(i + ", " + allKeys[i] + ", " + items[allKeys[i]] + ", " + items['id-'+allKeys[i]]);
+			console.log(i + ", " + allKeys[i] + ", " + items[allKeys[i]] + ", " + items['id-'+allKeys[i]] + ", " + items['atv-'+allKeys[i]]);
 		}
 
 	});

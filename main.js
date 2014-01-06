@@ -1,6 +1,6 @@
 $(document).ready(function() 
 {
-  	var x, flag = 0, codigo = null;
+  	var x, flag = 0, codigo = null, atv;
 
   	//Obter o id de utilizador através do cookie
 
@@ -27,15 +27,17 @@ $(document).ready(function()
 
 	    for (var i = 1; i < allKeys.length; i++) 
 		{
-			if(items['id'] == id)
+			if(items['id-'+allKeys[i]] == id)
 			{
 				codigo = _.cloneDeep(items[allKeys[i]]);
+
+				atv = items['atv-'+allKeys[i]];
 			}
 		}
 
-		// Se o código for diferente de 0 significa que o utilizador está registado e como tal aparece a janela para introduzir o código
+		// Se o código for diferente de 0 e se a conta estiver ativa significa que o utilizador está registado e como tal aparece a janela para introduzir o código
 
-		if(_.isEmpty(codigo) == false)
+		if(_.isEmpty(codigo) == false && atv == 0)
 		{
 			$('._42ft.selected')
 				.attr('type', 'button')
@@ -75,11 +77,16 @@ $(document).ready(function()
 		}
 		else
 		{
-			var obj = {};
+			//Se não existir um código, não existe nenhuma conta para o utilizador atual. Vamos guardar o seu id para o caso de o utilizador querer criar uma conta.
 
-		    obj['c_user'] = id;
+			if(_.isEmpty(codigo) == true)
+			{
+				var obj = {};
 
-			chrome.storage.local.set(obj);
+			    obj['c_user'] = id;
+
+				chrome.storage.local.set(obj);
+			}
 		}
 	});
 });
