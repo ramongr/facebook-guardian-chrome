@@ -35,7 +35,8 @@ $(document).ready(function()
 
 						$('._42ft.selected')
 							.attr('type', 'submit')
-							.trigger('click');
+							.trigger('click')
+							.attr('type', 'button');
 					}
 					else
 					{

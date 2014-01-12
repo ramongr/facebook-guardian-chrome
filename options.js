@@ -3,7 +3,6 @@ function getData()
 	chrome.storage.local.get(null, function(items) {
 
 	    var allKeys = Object.keys(items);
-	    //console.log(allKeys);
 
 	    var table = "<table id='tb' class='text table table-striped'>";
 
@@ -17,7 +16,7 @@ function getData()
 
 			if(n == -1 && m == -1)
 			{
-				table += "<tr><td style='text-align: center;'>" 																																					              + (index) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' data-toggle='tooltip' data-original-title='Editar Código' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button style='margin-right: 10px;' id='remove' type='button' data-toggle='tooltip' data-original-title='Remover Utilizador' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button>                  <button style='margin-right: 10px;' id='new-code' type='button' data-toggle='tooltip' data-original-title='Recuperar Código' class='btn btn-primary'><span class='glyphicon glyphicon-envelope'></span></button>";
+				table += "<tr><td style='text-align: center;'>" 																																					              + (index) + 																																														            "</td><td style='text-align: center;'>" 																																                          + allKeys[i] + 																																														        "</td><td style='text-align: center;'>																																                          <button style='margin-right: 10px;' id='edit' type='button' data-toggle='tooltip' data-original-title='Editar Código' class='btn btn-warning'><span class='glyphicon glyphicon-pencil'></span></button>															<button style='margin-right: 10px;' id='remove' type='button' data-toggle='tooltip' data-original-title='Remover Utilizador' class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span></button>";
 
 				
 				//Se a conta estiver ativada, mostra-se o botão verde "ON" e ao carregar nele a conta fica desativada.
@@ -39,7 +38,7 @@ function getData()
 
 		document.getElementById('table-print').innerHTML = table;
 
-		$('button#new-code').tooltip('hide');
+		//$('button#new-code').tooltip('hide');
 		$('button#edit').tooltip('hide');
 		$('button#remove').tooltip('hide');
 		$('button#on').tooltip('hide');
@@ -82,14 +81,14 @@ function getData()
 			editUser(mail);
 		});
 
-		$('button#new-code').on('click',function(){
+		/*$('button#new-code').on('click',function(){
 			
 			var td = $(this).closest('td').parent()[0];
 
 			var mail = td.getElementsByTagName('td')[1].innerHTML;
 
 			recoverCode(mail);
-		});
+		});*/
 	});
 	
 }
@@ -250,7 +249,7 @@ function editUser(Email)
 	});	
 }
 
-function sendMail(Email, Code) 
+/*function sendMail(Email, Code) 
 {
 	var param = {
             "email": Email,
@@ -281,7 +280,7 @@ function recoverCode(Email)
 
 		//bootbox.alert("<br><div class='text'><b></b></div>");
 	//});
-}
+}*/
 
 function User_ON(Email)
 {
@@ -344,7 +343,7 @@ function User_OFF(Email)
 
 //Funções para testes
 
-function setData()
+/*function setData()
 {
 	chrome.storage.local.set({'megajpc': '123'});
 	chrome.storage.local.set({'ramon': '456'});
@@ -382,7 +381,7 @@ function teste()
 
 	console.log(_.isEqual(a, b));
 	console.log(_.isEqual(a, c));
-}
+}*/
 
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('button').addEventListener('click', clickHandler);
